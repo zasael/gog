@@ -47,10 +47,10 @@ Circle :: struct {
 
 draw_circle :: proc(circle: Circle, transform: Transform, color: raylib.Color) {
 	center := raylib.Vector3Transform({circle.pos.x, circle.pos.y, 0}, transform).xy
-	scaling := raylib.MatrixToFloatV(transform)[0]
+	scaling := transform[0, 0]
 	radius := circle.radius * scaling
 	// TODO: should handle non uniform scaling
-	raylib.DrawCircle(i32(center.x), i32(center.y), circle.radius, color)
+	raylib.DrawCircle(i32(center.x), i32(center.y), radius, color)
 }
 
 // TODO: add bezier path

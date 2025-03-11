@@ -234,13 +234,12 @@ create_map :: proc(allocator: mem.Allocator) -> ^Object {
 	return root
 }
 
-create_player :: proc(x, y: f32, allocator: mem.Allocator) -> ^Object {
+create_player :: proc(allocator: mem.Allocator) -> ^Object {
 	player_shape := Circle {
 		pos    = {0, 0},
 		radius = 20,
 	}
-	player_transform := raylib.MatrixTranslate(x, y, 0)
-	player := create_object(player_shape, player_transform, raylib.BLUE, allocator)
+	player := create_object(player_shape, raylib.Matrix(1), raylib.BLUE, allocator)
 	return player
 }
 main :: proc() {
@@ -250,7 +249,13 @@ main :: proc() {
 
 	arena: mem.Arena
 	mem.arena_init(&arena, make([]byte, 4*1024*1024))
-	root := create_map(mem.arena_allocator(&arena))
+	allocator := mem.arena_allocator(&arena)
+	root := create_map(allocator)
+	player := create_player(allocator)
+
+	add_child(root, player)
+
+	zoom : f32 = 1
 
 	for !raylib.WindowShouldClose() {
 		// handle mouse events and push to queue
@@ -265,10 +270,14 @@ main :: proc() {
 		mouse_speed := raylib.GetMouseDelta()
 		mouse_wheel := raylib.GetMouseWheelMove()
 
+		if mouse_wheel != 0 {
+			zoom *= f32(math.exp_f32(0.01 * mouse_wheel))
+		}
+
 		draw_object(
 			root,
 			/*raylib.MatrixRotateZ(math.PI/2) **/
-			raylib.Matrix(1),
+			raylib.MatrixScale(zoom, zoom, 1),
 		)
 
 		// raylib.DrawFPS(10, 10)
