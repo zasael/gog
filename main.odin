@@ -1,13 +1,13 @@
 package main
 
 import "core:fmt"
+import "core:math"
 import "vendor:raylib"
-
 
 Player :: struct {
 	position: raylib.Vector2,
-	radius: f32,
-	color: raylib.Color
+	radius:   f32,
+	color:    raylib.Color,
 }
 
 draw_player :: proc(player: Player) {
@@ -21,10 +21,17 @@ main :: proc() {
 	raylib.SetTargetFPS(60)
 	raylib.InitWindow(WIDTH, HEIGHT, "gog & mgog")
 
-	player := Player{
-		position = raylib.Vector2{WIDTH/2, HEIGHT/2},
-		radius = 40,
-		color = raylib.RED,
+	player := Player {
+		position = raylib.Vector2{WIDTH / 2, HEIGHT / 2},
+		radius   = 40,
+		color    = raylib.RED,
+	}
+
+	root := Object {
+		id        = 1,
+		transform = raylib.MatrixRotateZ(1),
+		parent    = nil,
+		children  = nil,
 	}
 
 	for !raylib.WindowShouldClose() {
@@ -39,9 +46,14 @@ main :: proc() {
 
 		mouse_speed := raylib.GetMouseDelta()
 
-		draw_player(player)
-		raylib.DrawFPS(10, 10)
-		raylib.DrawText(fmt.caprintf("Mouse speed: %.2f, %.2f", mouse_speed.x, mouse_speed.y), 10, 20, 20, raylib.LIGHTGRAY)
+		draw_object(
+			&root,
+			/*raylib.MatrixRotateZ(math.PI/2) **/
+			raylib.MatrixTranslate(400, 200, 0),
+		)
+
+		// raylib.DrawFPS(10, 10)
+		// raylib.DrawText(fmt.caprintf("Mouse speed: %.2f, %.2f", mouse_speed.x, mouse_speed.y), 10, 20, 20, raylib.LIGHTGRAY)
 		raylib.EndDrawing()
 	}
 
