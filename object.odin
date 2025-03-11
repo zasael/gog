@@ -62,13 +62,19 @@ Shape :: union {
 }
 
 Object :: struct {
-	id:        int,
 	shape:     Shape,
 	transform: raylib.Matrix,
 	children:  [dynamic]^Object,
-	parent:    ^Object,
 }
 
+
+create_object :: proc(shape: Shape, transform: Transform) -> Object {
+	return {
+		shape = shape,
+		transform = transform,
+		children = make([dynamic]^Object, 0),
+	}
+}
 
 // transform_point :: proc(transform: Transform, point: raylib.Matrix
 
