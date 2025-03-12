@@ -116,6 +116,7 @@ draw_object :: proc(object: ^Object, parent_transform: raylib.Matrix) {
 }
 
 check_collision :: proc(first, second: ^Object) -> bool {
+	// TODO: I think I need to handle transformation
 	switch firstShape in first.shape {
 	case Rectangle:
 		switch secondShape in second.shape {
