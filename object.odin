@@ -66,6 +66,7 @@ Object :: struct {
 	shape:     Shape,
 	transform: raylib.Matrix,
 	children:  [dynamic]^Object,
+	solid:     bool,
 	color:     raylib.Color,
 }
 
@@ -74,12 +75,14 @@ create_object :: proc(
 	shape: Shape,
 	transform: Transform,
 	color: raylib.Color,
+	solid: bool,
 	allocator: mem.Allocator,
 ) -> ^Object {
 	object := new(Object, allocator)
 	object.shape = shape
 	object.transform = transform
 	object.children = make([dynamic]^Object, 0, 8, allocator)
+	object.solid = solid
 	object.color = color
 	return object
 }
@@ -110,4 +113,73 @@ draw_object :: proc(object: ^Object, parent_transform: raylib.Matrix) {
 			draw_object(child, transform)
 		}
 	}
+}
+
+check_collision :: proc(first, second: ^Object) -> bool {
+	switch firstShape in first.shape {
+	case Rectangle:
+		switch secondShape in second.shape {
+		case Rectangle:
+			return raylib.CheckCollisionRecs(
+				raylib.Rectangle {
+					firstShape.pos.x,
+					firstShape.pos.y,
+					firstShape.size.x,
+					firstShape.size.y,
+				},
+				raylib.Rectangle {
+					secondShape.pos.x,
+					secondShape.pos.y,
+					secondShape.size.x,
+					secondShape.size.y,
+				},
+			)
+		case Triangle:
+			return raylib.CheckCollisionRecs(raylib.Rectangle{}, raylib.Rectangle{})
+		case Circle:
+			return raylib.CheckCollisionCircleRec(
+				secondShape.pos,
+				secondShape.radius,
+				raylib.Rectangle {
+					firstShape.pos.x,
+					firstShape.pos.y,
+					firstShape.size.x,
+					firstShape.size.y,
+				},
+			)
+		}
+	case Triangle:
+		switch secondShape in second.shape {
+		case Rectangle:
+			return raylib.CheckCollisionRecs(raylib.Rectangle{}, raylib.Rectangle{})
+		case Triangle:
+			return raylib.CheckCollisionRecs(raylib.Rectangle{}, raylib.Rectangle{})
+		case Circle:
+			return raylib.CheckCollisionRecs(raylib.Rectangle{}, raylib.Rectangle{})
+		}
+	case Circle:
+		switch secondShape in second.shape {
+		case Rectangle:
+			return raylib.CheckCollisionCircleRec(
+				firstShape.pos,
+				firstShape.radius,
+				raylib.Rectangle {
+					secondShape.pos.x,
+					secondShape.pos.y,
+					secondShape.size.x,
+					secondShape.size.y,
+				},
+			)
+		case Triangle:
+			return raylib.CheckCollisionRecs(raylib.Rectangle{}, raylib.Rectangle{})
+		case Circle:
+			return raylib.CheckCollisionCircles(
+				firstShape.pos,
+				firstShape.radius,
+				secondShape.pos,
+				secondShape.radius,
+			)
+		}
+	}
+	return false
 }

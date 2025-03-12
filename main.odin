@@ -25,6 +25,7 @@ create_room :: proc(
 		Rectangle{pos = {0, 0}, size = {width, height}},
 		room_transform,
 		floor_color,
+		false,
 		allocator,
 	)
 
@@ -33,7 +34,7 @@ create_room :: proc(
 		pos  = {0, 0},
 		size = {WALL_THICKNESS, height},
 	}
-	left_wall_obj := create_object(left_wall, raylib.Matrix(1), wall_color, allocator)
+	left_wall_obj := create_object(left_wall, raylib.Matrix(1), wall_color, true, allocator)
 	add_child(room, left_wall_obj)
 
 	// Right wall
@@ -41,7 +42,7 @@ create_room :: proc(
 		pos  = {width - WALL_THICKNESS, 0},
 		size = {WALL_THICKNESS, height},
 	}
-	right_wall_obj := create_object(right_wall, raylib.Matrix(1), wall_color, allocator)
+	right_wall_obj := create_object(right_wall, raylib.Matrix(1), wall_color, true, allocator)
 	add_child(room, right_wall_obj)
 
 	// Top wall
@@ -49,7 +50,7 @@ create_room :: proc(
 		pos  = {0, 0},
 		size = {width, WALL_THICKNESS},
 	}
-	top_wall_obj := create_object(top_wall, raylib.Matrix(1), wall_color, allocator)
+	top_wall_obj := create_object(top_wall, raylib.Matrix(1), wall_color, true, allocator)
 	add_child(room, top_wall_obj)
 
 	// Bottom wall
@@ -57,7 +58,7 @@ create_room :: proc(
 		pos  = {0, height - WALL_THICKNESS},
 		size = {width, WALL_THICKNESS},
 	}
-	bottom_wall_obj := create_object(bottom_wall, raylib.Matrix(1), wall_color, allocator)
+	bottom_wall_obj := create_object(bottom_wall, raylib.Matrix(1), wall_color, true, allocator)
 	add_child(room, bottom_wall_obj)
 
 	return room
@@ -98,7 +99,7 @@ create_door :: proc(
 			size = {WALL_THICKNESS, door_pos},
 		}
 		if door_pos > 0 {
-			top_wall_obj := create_object(top_wall, raylib.Matrix(1), wall_color, allocator)
+			top_wall_obj := create_object(top_wall, raylib.Matrix(1), wall_color, true, allocator)
 			add_child(room, top_wall_obj)
 		}
 
@@ -108,7 +109,7 @@ create_door :: proc(
 			size = {WALL_THICKNESS, height - (door_pos + door_size)},
 		}
 		if bottom_wall.size.y > 0 {
-			bottom_wall_obj := create_object(bottom_wall, raylib.Matrix(1), wall_color, allocator)
+			bottom_wall_obj := create_object(bottom_wall, raylib.Matrix(1), wall_color, true, allocator)
 			add_child(room, bottom_wall_obj)
 		}
 	} else if wall_position == "right" {
@@ -118,7 +119,7 @@ create_door :: proc(
 			size = {WALL_THICKNESS, door_pos},
 		}
 		if door_pos > 0 {
-			top_wall_obj := create_object(top_wall, raylib.Matrix(1), wall_color, allocator)
+			top_wall_obj := create_object(top_wall, raylib.Matrix(1), wall_color, true, allocator)
 			add_child(room, top_wall_obj)
 		}
 
@@ -128,7 +129,7 @@ create_door :: proc(
 			size = {WALL_THICKNESS, height - (door_pos + door_size)},
 		}
 		if bottom_wall.size.y > 0 {
-			bottom_wall_obj := create_object(bottom_wall, raylib.Matrix(1), wall_color, allocator)
+			bottom_wall_obj := create_object(bottom_wall, raylib.Matrix(1), wall_color, true, allocator)
 			add_child(room, bottom_wall_obj)
 		}
 	} else if wall_position == "top" {
@@ -138,7 +139,7 @@ create_door :: proc(
 			size = {door_pos, WALL_THICKNESS},
 		}
 		if door_pos > 0 {
-			left_wall_obj := create_object(left_wall, raylib.Matrix(1), wall_color, allocator)
+			left_wall_obj := create_object(left_wall, raylib.Matrix(1), wall_color, true, allocator)
 			add_child(room, left_wall_obj)
 		}
 
@@ -148,7 +149,7 @@ create_door :: proc(
 			size = {width - (door_pos + door_size), WALL_THICKNESS},
 		}
 		if right_wall.size.x > 0 {
-			right_wall_obj := create_object(right_wall, raylib.Matrix(1), wall_color, allocator)
+			right_wall_obj := create_object(right_wall, raylib.Matrix(1), wall_color, true, allocator)
 			add_child(room, right_wall_obj)
 		}
 	} else if wall_position == "bottom" {
@@ -158,7 +159,7 @@ create_door :: proc(
 			size = {door_pos, WALL_THICKNESS},
 		}
 		if door_pos > 0 {
-			left_wall_obj := create_object(left_wall, raylib.Matrix(1), wall_color, allocator)
+			left_wall_obj := create_object(left_wall, raylib.Matrix(1), wall_color, true, allocator)
 			add_child(room, left_wall_obj)
 		}
 
@@ -168,14 +169,14 @@ create_door :: proc(
 			size = {width - (door_pos + door_size), WALL_THICKNESS},
 		}
 		if right_wall.size.x > 0 {
-			right_wall_obj := create_object(right_wall, raylib.Matrix(1), wall_color, allocator)
+			right_wall_obj := create_object(right_wall, raylib.Matrix(1), wall_color, true, allocator)
 			add_child(room, right_wall_obj)
 		}
 	}
 }
 
 create_map :: proc(allocator: mem.Allocator) -> ^Object {
-	root := create_object(nil, raylib.Matrix(1), raylib.BLACK, allocator)
+	root := create_object(nil, raylib.Matrix(1), raylib.BLACK, false, allocator)
 
 	room_width := 200
 	room_height := 150
@@ -274,7 +275,7 @@ create_player :: proc(allocator: mem.Allocator) -> ^Object {
 		pos    = {0, 0},
 		radius = 10,
 	}
-	player := create_object(player_shape, raylib.Matrix(1), raylib.BLUE, allocator)
+	player := create_object(player_shape, raylib.Matrix(1), raylib.BLUE, true, allocator)
 	return player
 }
 
@@ -336,11 +337,11 @@ main :: proc() {
 			position.y -= speed * math.cos_f32(angle)
 		}
 		if raylib.IsKeyDown(.A) {
-			position.y += speed * math.sin_f32(angle)
+			position.y -= speed * math.sin_f32(angle)
 			position.x += speed * math.cos_f32(angle)
 		}
 		if raylib.IsKeyDown(.D) {
-			position.y -= speed * math.sin_f32(angle)
+			position.y += speed * math.sin_f32(angle)
 			position.x -= speed * math.cos_f32(angle)
 		}
 
@@ -349,6 +350,8 @@ main :: proc() {
 
 		if raylib.IsKeyDown(.LEFT_SHIFT) {
 			speed = 7
+		} else if raylib.IsKeyDown(.LEFT_ALT) {
+			speed = 2
 		} else {
 			speed = 4
 		}
